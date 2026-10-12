@@ -45,3 +45,5 @@ class PostgresTest(unittest.TestCase):
         app.sidebar.radio[0].set_value('Details and follow-up').run()
         self.assertEqual(len(app.exception), 0)
         self.assertIn('This repair is closed.', [message.value for message in app.success])
+        reviewed_id = storage.add_incident('Demo AI', 'Long-term', 'Reviewed report', 'General / to be determined', 'Normal', followup_note='Reviewed draft, not sent')
+        self.assertEqual(storage.rows('SELECT * FROM updates WHERE incident_id=?', (reviewed_id,))[0]['note'], 'Reviewed draft, not sent')

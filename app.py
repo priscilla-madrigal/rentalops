@@ -26,7 +26,7 @@ st.caption('Maintenance and service providers for short-term and long-term renta
 st.info('Local prototype. Messages and confirmations are recorded manually.')
 st.sidebar.caption('Storage: PostgreSQL (external database)' if store.database_url() else 'Storage: local SQLite — demo records may be lost on hosting restarts.')
 specialties = ['Plumbing / leaks', 'Electrical', 'Roofing and gutters', 'Cleaning', 'Locksmith', 'General / to be determined']
-page = st.sidebar.radio('Management', ['Maintenance requests', 'Details and follow-up', 'Service providers'])
+page = st.sidebar.radio('Management', ['Maintenance requests', 'Details and follow-up', 'Service providers', 'AI intake'])
 providers = store.rows('SELECT * FROM providers ORDER BY name')
 incidents = store.rows('SELECT * FROM incidents ORDER BY id DESC')
 
@@ -76,6 +76,10 @@ elif page == 'Service providers':
         st.dataframe([{'Name':p['name'],'Specialty':p['specialty'],'Service area':p['zone'],'Phone':p['phone'],'Notes':p['notes']} for p in providers],hide_index=True)
     else:
         st.write('Add your regular providers and new contacts.')
+
+elif page == 'AI intake':
+    import intake_screen
+    intake_screen.render()
 
 else:
     if not incidents:

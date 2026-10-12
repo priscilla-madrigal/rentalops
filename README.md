@@ -38,6 +38,8 @@ The WhatsApp button opens a draft for you to review and send manually. It does n
 
 - `app.py`: Streamlit screens, forms, and WhatsApp links.
 - `access.py`: Google sign-in gate and verified-email authorization.
+- `ai_intake.py`: OpenAI structured extraction and response validation, without database writes.
+- `intake_screen.py`: editable AI draft and explicit owner approval before saving.
 - `storage.py`: parameterized SQL queries and SQLite transactions.
 - `data/rentals.db`: local records, excluded from Git. Set `RENTAL_DB_PATH` to use another location.
 - `tests/test_workflow.py`: persistence, validation, and interface workflow tests.
@@ -78,7 +80,7 @@ These checks report failures but do not block Streamlit deployment from `main`. 
 
 ## Current scope
 
-The prototype records requests, contacts, notes, visits, and costs. It does not store videos, interpret reports with AI, receive WhatsApp messages, or automate notifications. Dashboard counters reflect recorded state rather than automated monitoring.
+The prototype records requests, contacts, notes, visits, and costs. **AI intake** prepares editable maintenance drafts from text reports when an OpenAI API key is configured. Follow the [AI pilot and setup guide](docs/AI_INTAKE.md) for configuration, limitations, and evaluation. Generating a draft does not save a request or contact a provider. It does not store videos, receive WhatsApp messages, or automate notifications. Dashboard counters reflect recorded state rather than automated monitoring.
 
 The owner has deployed the prototype to Streamlit Community Cloud and verified repair closure and Neon persistence after a reboot. Google sign-in and a verified-email allowlist protect application access once configured; without configuration, records remain blocked. The real Google login flow still requires hosted browser validation. All approved users share the same records. Continue using fictional data until data protection, backups, and access configuration have been verified. Operational monitoring is not implemented yet.
 

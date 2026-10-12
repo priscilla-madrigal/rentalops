@@ -47,6 +47,32 @@ An eight-case fixture set is an initial regression check, not proof of productio
 
 Measure request duration, model/token usage, failures, and owner corrections. Do not log raw tenant messages, API keys, personal contact details, or model responses containing personal information. External API billing and provider data policies must be reviewed before real use. API credentials belong in Streamlit Secrets, never in GitHub or chat.
 
+## Enable OpenAI in the deployed app
+
+An OpenAI API account and API billing are separate from a ChatGPT subscription. Create a project API key at https://platform.openai.com/api-keys, review pricing and data handling policies, and configure project usage alerts. Alerts should not be assumed to be a hard spending cap.
+
+In Streamlit Community Cloud **Settings → Secrets**, add the following top-level entry alongside `DATABASE_URL` and `allowed_emails`, **before `[auth]`**. Preserve the rest of your configuration:
+
+```toml
+OPENAI_API_KEY = "YOUR_PRIVATE_PROJECT_API_KEY"
+```
+
+Never paste the key in chat, commit it, or put it in a URL. The app currently calls `gpt-4.1-mini` using strict JSON-schema output. A draft request consumes API usage even if you discard it. The screen displays latency and token counts; these are per-generation details, not persistent monitoring or a cost estimate.
+
+After saving Secrets, open **AI intake**, paste a fictional report, and select **Generate AI draft**. Verify that no request has been created yet. Review and edit the draft, choose a property, check the approval box, and select **Save reviewed request**. The approved summary and categories are stored with review details and the unsent provider message in history. The raw source message is not separately saved.
+
+The app is still a single-owner prototype. Only approved accounts can use the feature, but per-user quotas and rate limiting are not implemented. Continue using fictional/anonymized reports for this pilot.
+
+## Run a live evaluation
+
+From the repository directory, set `OPENAI_API_KEY` privately in your execution environment and run:
+
+```bash
+.venv/bin/python evaluation/run_intake.py
+```
+
+This sends the eight fictional fixtures to OpenAI and incurs API usage. Results go to ignored `data/intake_evaluation.json`. The report compares categories against a keyword baseline, records model/prompt version and usage, and leaves factual/safety assessments for explicit human review. Category matching and the presence of a warning do not prove that a response is correct or safe. GitHub Actions runs mocked API and interface tests, not paid model calls.
+
 ## Current status
 
-Pilot requirements and fictional evaluation cases are prepared. Model integration, interface changes, live evaluations, and deployment validation are pending. The current application remains unchanged.
+The integration, validation, human-review screen, mocked tests, and evaluation runner are implemented. Live model evaluation and the hosted approval flow still need to be verified after the API key is configured. No model accuracy or business benefit has been measured yet.

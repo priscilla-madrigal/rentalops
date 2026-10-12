@@ -82,9 +82,12 @@ def add_provider(name, specialty, zone, phone, notes):
     with connect() as db:
         db.execute('INSERT INTO providers (name,specialty,zone,phone,notes) VALUES (?,?,?,?,?)', (name,specialty,zone,phone,notes))
 
-def add_incident(property_name, rental_type, description, specialty, priority):
+def add_incident(property_name, rental_type, description, specialty, priority, followup_note=''):
     with connect() as db:
-        db.execute('INSERT INTO incidents (property,rental_type,description,specialty,priority,last_activity) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP)', (property_name,rental_type,description,specialty,priority))
+        row = db.execute('INSERT INTO incidents (property,rental_type,description,specialty,priority,last_activity) VALUES (?,?,?,?,?,CURRENT_TIMESTAMP) RETURNING id', (property_name,rental_type,description,specialty,priority)).fetchone()
+        if followup_note.strip():
+            db.execute('INSERT INTO updates (incident_id,note) VALUES (?,?)', (row['id'], followup_note.strip()))
+        return row['id']
 
 def save_incident(id, status, provider_id, visit, cost, note):
     if status not in STATUSES or (cost is not None and cost < 0):
